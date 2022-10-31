@@ -26,10 +26,29 @@ CREATE TABLE List(
 );
 
 CREATE TABLE Comment(
-    comment_id int NOT NULL AUTO_INCREMENT,
+    comment_id int NOT NULL PRIMARY KEY AUTO_INCREMENT,
     task_id int NOT NULL,
     content VARCHAR(50) NOT NULL,
     order int NOT NULL,
     PRIMARY KEY (comment_id)
     FOREIGN KEY (task_id) REFERENCES Task(task_id)
+);
+
+CREATE TABLE Task(
+    task_id int NOT NULL AUTO_INCREMENT,
+    list_id int FOREIGN KEY REFERENCES List(list_id),
+    title VARCHAR(20) NOT NULL,
+    description VARCHAR(20),
+    reminder DATE,
+    due_date DATE,
+    important BOOLEAN,
+    completed BOOLEAN
+);
+
+CREATE TABLE Subtask(
+    subtask_id int NOT NULL PRIMARY KEY AUTO_INCREMENT,
+    task_id int FOREIGN KEY REFERENCES Task(task_id),
+    priority smallint,
+    description VARCHAR(20),
+    completed BOOLEAN
 );
