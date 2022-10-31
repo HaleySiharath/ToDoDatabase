@@ -40,7 +40,7 @@ CREATE TABLE Task(
     title VARCHAR(20) NOT NULL,
     description VARCHAR(20),
     reminder DATE,
-    due_date DATE,
+    due_date DATETIME,
     important BOOLEAN,
     completed BOOLEAN
 );
