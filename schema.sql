@@ -67,7 +67,7 @@ VALUES  ('Tristan', 'secret password', 'telsener@uncc.edu'), -- 1 user_id
         ('Jason', 'PaSsWoRd456', 'jkhotsom@uncc.edu');       -- 3 user_id
 
 INSERT INTO List(user_id, title, description)
-VALUES  (1, 'Schoolwork', 'Assignemtns and Projects fo class'), -- 1 list_id
+VALUES  (1, 'Schoolwork', 'Assignemtns and Projects fo class'), 				  -- 1 list_id
         (1, 'Chores', 'Things that I need to get done arround the House'),        -- 2 list_id
         (2, 'To-Do', 'All of the things that I need to get done today'),          -- 3 list_id
         (3, 'UNCC-GameDevs', 'List of UNCC Game Devs Projects');                  -- 4 list_id
@@ -112,16 +112,32 @@ VALUES  -- 1 comment_id
         (4, 'Meet Natalia there at 3:00 pm so that everything works out');
 
 
-SELECT * FROM User;
-SELECT * FROM List;
-SELECT * FROM Task;
-SELECT * FROM Subtask;
-SELECT * FROM Comment;
+-- SELECT * FROM User;
+-- SELECT * FROM List;
+-- SELECT * FROM Task;
+-- SELECT * FROM Subtask;
+-- SELECT * FROM Comment;
 
-SELECT U.username, L.title, COUNT(T.task_id)
+-- Display all of user tables and how many tasks each table has
+SELECT U.username as username, L.title as list, COUNT(*) as taks_count_per_table
 FROM User U
 INNER JOIN List L ON (L.user_id = U.user_id)
-INNER JOIN Task T ON (T.list_id = L.list_id)
-WHERE U.user_id = 1 AND L.list_id = T.list_id;
+JOIN Task T ON (T.list_id = L.list_id)
+GROUP BY U.user_id, L.list_id
+ORDER BY U.user_id;
 
 
+-- Display all subtasks of a given task
+SELECT L.title as list, T.title as task, S.subtask_id, S.description as subtask
+FROM List L 
+INNER JOIN Task T ON (L.list_id = T.list_id)
+INNER JOIN Subtask S ON (T.task_id = S.task_id)
+ORDER BY T.task_id;
+
+
+-- Display all completed task
+SELECT L.title as list, T.title as completed_task, T.completed
+FROM Task T
+INNER JOIN List L ON (L.list_id = T.list_id)
+WHERE T.completed = TRUE
+ORDER BY T.list_id;
