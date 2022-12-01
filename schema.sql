@@ -79,6 +79,8 @@ CREATE TABLE Comment(
     FOREIGN KEY (task_id) REFERENCES Task(task_id)
 );
 
+CREATE INDEX comment_index
+ON Comment(comment_id, task_id);
 
 CREATE TABLE Subtask(
     subtask_id int NOT NULL AUTO_INCREMENT,
@@ -90,6 +92,9 @@ CREATE TABLE Subtask(
     FOREIGN KEY (task_id) REFERENCES Task(task_id)
 );
 
+CREATE INDEX subtask_index
+ON Subtask(subtask_id, task_id);
+
 -- INSERTING DATA INTO DATABASE
 INSERT INTO User(username, password, email, team_id) -- userid is incremented auto
 VALUES  ('Tristan', 'secret password', 'telsener@uncc.edu', NULL), -- 1 user_id
@@ -97,15 +102,17 @@ VALUES  ('Tristan', 'secret password', 'telsener@uncc.edu', NULL), -- 1 user_id
         ('Jason', 'PaSsWoRd456', 'jkhotsom@uncc.edu', NULL),       -- 3 user_id
         ('Darwin', 'Whathappen', 'dardar@gmail.com', 1),		   -- 4 user_id
         ('Goofy', 'Yonks', 'goofy@gmail.com', 1),		   		   -- 5 user_id
-        ('Daffy', 'ILikeCarrots', 'daffyDuck1@gmail.com', 1);	   -- 6 user_id
-        
+        ('Daffy', 'ILikeCarrots', 'daffyDuck1@gmail.com', 2),   	-- 6 user_id
+        ('Donald', 'YESYES', 'donald@gmail.com', 1); 	 			-- 7 user_id
 
 INSERT INTO Admin_User(username, password, email, project_id) -- userid is incremented auto
-VALUES  ('Mone', 'passcode176', 'mone@corpirate.com', 1);			-- 1 admin_user
+VALUES  ('Mone', 'passcode176', 'mone@corpirate.com', 1),		-- 1 admin_user
+		('Thor', 'studfd', 'thor@corpirate.com', 2);		-- 1 admin_user
 
 INSERT INTO Project(project_id, team_id, role)
 VALUES	(1, 1, 'backend team'),										-- Project 1 team 1
-		(1, 2, 'frontend team');									-- Project 1 team 2
+		(1, 2, 'frontend team'),									-- Project 1 team 2
+        (2, 1, 'stuff');											-- Project 2 team 1
 
 INSERT INTO Project_List(user_id, project_id)
 VALUES	(4, 1),
@@ -197,3 +204,5 @@ INNER JOIN User U ON (U.team_id = P.team_id)
 INNER JOIN Admin_User A ON (A.project_id = P.project_id)
 GROUP BY P.project_id
 ORDER BY P.project_id, U.team_id;
+
+
