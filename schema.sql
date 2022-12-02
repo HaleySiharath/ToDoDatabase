@@ -254,11 +254,8 @@ CALL adminOfProject(1);
 CREATE TRIGGER newUser
 AFTER INSERT ON User
 FOR EACH ROW
-INSERT INTO List
-SET action = 'insert',
-    user_id = NEW.user_id,
-    title = 'First List!',
-    description = 'Welcome to the todo app, this is your stater list'
+INSERT INTO List(user_id, title, description)
+VALUES(NEW.user_id,'First List!','Welcome to the todo app, this is your stater list')
     ;
 
 SHOW TRIGGERS;
