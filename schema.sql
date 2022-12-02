@@ -181,23 +181,22 @@ VALUES  -- 1 comment_id
         (4, 'Meet Natalia there at 3:00 pm so that everything works out');
 
 
+--- Create a view to see all users tasks
+
+CREATE VIEW UserTasksView AS 
+SELECT U.username as username, L.title as list, COUNT(*) as taks_count_per_table
+FROM User U
+INNER JOIN List L ON (L.user_id = U.user_id)
+JOIN Task T ON (T.list_id = L.list_id)
+GROUP BY U.user_id, L.list_id
+ORDER BY U.user_id;
+
+SELECT * FROM UserTasksView;
 
 
--- Display the list of users on a project and what roles they are assigned
-SELECT U.username as teamUser, P.project_id as projectId, P.role as projectRole
-FROM Project P
-INNER JOIN User U on (U.team_id = P.team_id)
-INNER JOIN Admin_User A on (A.project_id = P.project_id);
+--- Create a view to see all teams within a project
 
--- Display the tasks of a user who is in project 1 and team 1
-SELECT P.project_id as Project, P.team_id as Team, T.title as Tasks
-FROM Project P
-INNER JOIN Project_List PL on (PL.project_id = P.project_id)
-INNER JOIN List L on (PL.user_id = L.user_id)
-INNER JOIN Task T on (T.list_id = L.list_id)
-ORDER BY P.project_id;
-
--- Display the number of people on a team
+CREATE VIEW ProjectTeamView AS
 SELECT P.project_id as Project, P.team_id as Team, COUNT(*)
 FROM Project P
 INNER JOIN User U ON (U.team_id = P.team_id)
@@ -205,4 +204,66 @@ INNER JOIN Admin_User A ON (A.project_id = P.project_id)
 GROUP BY P.project_id
 ORDER BY P.project_id, U.team_id;
 
+SELECT * FROM ProjectTeamView;
 
+
+--- Stored procedure
+
+DELIMITER //
+
+CREATE PROCEDURE SelectAllLists(
+	IN userId INT
+)
+BEGIN 
+	SELECT *
+	FROM List L
+	WHERE L.user_id = userId;
+END
+//
+
+DELIMITER ;
+
+CALL SelectAllLists(1);
+
+
+
+--- Create stored function to get the admin of a project
+
+DELIMITER //
+
+CREATE PROCEDURE adminOfProject(
+	IN projectId INT
+)
+BEGIN
+	SELECT P.project_id as project, A.admin_id
+    FROM Admin_User A
+    INNER JOIN Project P ON (P.project_id = A.project_id)
+    WHERE P.project_id = projectId
+    GROUP BY P.project_id;
+END 
+//
+
+DELIMITER ;
+
+
+CALL adminOfProject(1);
+
+
+--- Trigger so that a starter list is made for each new user
+
+CREATE TRIGGER newUser
+AFTER INSERT ON User
+FOR EACH ROW
+INSERT INTO List
+SET action = 'insert',
+    user_id = NEW.user_id,
+    title = 'First List!',
+    description = 'Welcome to the todo app, this is your stater list'
+    ;
+
+SHOW TRIGGERS;
+
+INSERT INTO User(username, password, email, team_id) -- userid is incremented auto
+VALUES  ('Gregory Morris', 'secret password', 'M@uncc.edu', NULL);
+
+SELECT * FROM List;
